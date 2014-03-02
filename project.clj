@@ -7,6 +7,8 @@
                  [io.pedestal/pedestal.service "0.2.2"]
                  [io.pedestal/pedestal.service-tools "0.2.2"]
 
+                 [com.novemberain/validateur "2.0.0-beta3"]
+
                  ;; Remove this line and uncomment the next line to
                  ;; use Tomcat instead of Jetty:
                  [io.pedestal/pedestal.jetty "0.2.2"]

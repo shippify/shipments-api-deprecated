@@ -2,6 +2,7 @@
     (:require [io.pedestal.service.http :as bootstrap]
               [io.pedestal.service.http.route :as route]
               [io.pedestal.service.http.body-params :as body-params]
+              [io.pedestal.service.http :refer [json-response]]
               [io.pedestal.service.http.route.definition :refer [defroutes]]
               [ring.util.response :as ring-resp]
               [shipments-api.shipments :as shipments]))
@@ -19,7 +20,7 @@
 (defroutes routes
   [[["/" {:get home-page}
      ;; Set default interceptors for /about and any other paths under /
-     ^:interceptors [(body-params/body-params) bootstrap/html-body]
+     ^:interceptors [(body-params/body-params) bootstrap/html-body json-response]
      ["/about" {:get about-page}]
      ["/shipments" {:post shipments/request}]]]])
 
