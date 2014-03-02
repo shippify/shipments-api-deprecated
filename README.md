@@ -1,6 +1,23 @@
 # shipments-api
 
-FIXME
+# HTTP API
+## Request a shipment
+### POST /shipments
+```
+POST /shipments
+| Parameter  | Type | Required |
+| ------------- | ------------- | ------------- |
+| pickup-coordinates | longitude,latitude | Yes |
+| pickup-contact-name | string | Yes |
+| pickup-phone | string | Yes |
+| pickup-time | iso-8601 date | Yes |
+| delivery-coordinates | longitude,latitude | Yes |
+| delivery-contact-name | string | Yes |
+| delivery-phone | string | Yes |
+| delivert-time | iso-8601 date | Yes |
+| heavy | true or false | No |
+| fragile | true or false | No |
+```
 
 ## Getting Started
 
