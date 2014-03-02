@@ -1,10 +1,8 @@
 # shipments-api
 
-# HTTP API
-## Request a shipment
-### POST /shipments
-```
-POST /shipments
+## POST /shipments
+Request a shipment.
+
 | Parameter  | Type | Required |
 | ------------- | ------------- | ------------- |
 | pickup-coordinates | longitude,latitude | Yes |
@@ -17,7 +15,6 @@ POST /shipments
 | delivert-time | iso-8601 date | Yes |
 | heavy | true or false | No |
 | fragile | true or false | No |
-```
 
 ## Getting Started
 
