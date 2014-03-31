@@ -4,5 +4,5 @@
             [io.pedestal.service.http :as http]
             [shipments-api.service :as app]))
 
-(msg/start "topic.requested-shipments")
+(msg/start "/topic/shipment-requests")
 (web/start-servlet "/" (::http/servlet (http/create-servlet app/service)))

@@ -9,6 +9,8 @@
 
                  [com.novemberain/validateur "2.0.0-beta3"]
 
+                 [cheshire "5.3.1"]
+
                  ;; Remove this line and uncomment the next line to
                  ;; use Tomcat instead of Jetty:
                  [io.pedestal/pedestal.jetty "0.2.2"]
@@ -28,4 +30,5 @@
                             (clojure.stacktrace/print-stack-trace t)
                             (println)))
                   :welcome (println "Welcome to pedestal-service! Run (tools-help) to see a list of useful functions.")}
-  :main ^{:skip-aot true} shipments-api.server)
+  :main ^{:skip-aot true} shipments-api.server
+  :immutant {:nrepl-port 4004})

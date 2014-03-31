@@ -2,27 +2,29 @@
     (:require [io.pedestal.service.http :as bootstrap]
               [io.pedestal.service.http.route :as route]
               [io.pedestal.service.http.body-params :as body-params]
-              [io.pedestal.service.http :refer [json-response]]
+              [io.pedestal.service.http :refer [json-body]]
               [io.pedestal.service.http.route.definition :refer [defroutes]]
-              [ring.util.response :as ring-resp]
-              [shipments-api.shipments :as shipments]))
-
-(defn about-page
-  [request]
-  (ring-resp/response (format "Clojure %s - served from %s"
-                              (clojure-version)
-                              (route/url-for ::about-page))))
+              [shipments-api.shipments :as shipments]
+              [shipments-api.validations :as v]))
 
 (defn home-page
   [request]
-  (ring-resp/response "Hello Shipify!"))
+  {:status 200 :body "Hi"})
 
 (defroutes routes
   [[["/" {:get home-page}
+
      ;; Set default interceptors for /about and any other paths under /
-     ^:interceptors [(body-params/body-params) bootstrap/html-body json-response]
-     ["/about" {:get about-page}]
-     ["/shipments" {:post shipments/request}]]]])
+     ^:interceptors [(body-params/body-params
+                      (body-params/default-parser-map
+                        :json-options {:key-fn keyword}))
+                     json-body]
+
+     ["/shipments" {:post [^:interceptors
+                           [(v/validate-request
+                             shipments/required-fields :json-params)
+                            shipments/queue-message]
+                           :shipment-request shipments/respond-request]}]]]])
 
 ;; Consumed by shipments-api.server/create-server
 ;; See bootstrap/default-interceptors for additional options you can configure

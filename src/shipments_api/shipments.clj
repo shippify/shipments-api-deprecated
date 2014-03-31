@@ -1,33 +1,35 @@
 (ns shipments-api.shipments
-  (:require [immutant.messaging :as msg]
-            [io.pedestal.service.interceptor :as interceptor :refer [defbefore]]
-            [validateur.validation :as v]))
+  (:require [validateur.validation :as v]
+            [immutant.messaging :as msg]
+            [io.pedestal.service.interceptor :as interceptor
+             :refer [defbefore defhandler]]
+            [cheshire.core :refer :all]
+            [ring.util.response :as ring-response]))
 
-(def -pickup-validations
+(def required-fields
   (v/validation-set
-   (v/presence-of :pickup-coordinates)
-   (v/presence-of :pickup-contact-name)
-   (v/presence-of :pickup-phone)
-   (v/presence-of :pickup-time)))
+   (v/presence-of [:delivery :coordinates]
+                  :message "lat,lon coordinates are required.")
+   (v/presence-of [:delivery :name]
+                  :message "The name of the recipient is required.")
+   (v/presence-of [:delivery :phone]
+                  :message "The phone of the recipient is required.")
+   (v/presence-of [:delivery :time]
+                  :message "Please, provide a delivery time.")
+   (v/presence-of [:pickup :coordinates]
+                  :message "lat,lon coordinates are required.")
+   (v/presence-of [:pickup :name]
+                  :message "A pickup name is required.")
+   (v/presence-of [:pickup :phone]
+                  :message "A pickup phone is required.")
+   (v/presence-of [:pickup :time]
+                  :message "Please provide the time of pickup.")))
 
-(def -delivery-validations
-  (v/validation-set
-   (v/presence-of :delivery-coordinates)
-   (v/presence-of :delivery-contact-name)
-   (v/presence-of :delivery-phone)
-   (v/presence-of :delivery-time)))
-
-(defbefore validate-request
+(defbefore queue-message
   [context]
-  (let [request (:request context)
-        params (:body-params request)
-        is-valid (v/valid? -pickup-validations params)]
-    (if (first is-valid)
-      (assoc request :shipment params)
-      (throw (Exception. (second is-valid))))))
+  (msg/publish "/topic/shipment-requests" (:json-params (:request context)))
+  context)
 
-(defn request
+(defhandler respond-request
   [request]
-  (do
-    (msg/publish "topic.requested-shipments" (:shipment request))
-    {:status 200 :body "Shipment requested."}))
+  {:status 200 :body {:code "Shipment requested."}})
